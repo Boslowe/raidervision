@@ -169,12 +169,12 @@
   <header>
     <div class="eyebrow">Studio refresh proposal</div>
     <h1>RaiderVision set, dressed</h1>
-    <p class="lede">The lounge set as it would look on camera with five new pieces. The sofa, coffee table and neon sign are already in the studio. Point at a label, or tap a blue dot on a phone, to see each item and open its product page.</p>
+    <p class="lede">The lounge set as it would look on camera with six new pieces. The sofa, coffee table and neon sign are already in the studio. Point at a label, or tap a blue dot on a phone, to see each item and open its product page.</p>
   </header>
 
   <div>
     <div class="scene" id="scene">
-      <img src="studio-crop.png" alt="Mockup of the RaiderVision studio lounge set: cream curved sofa against a walnut slat wall with a blue RaiderVision neon sign, a faux bay leaf tree on the left, a black side table with a small plant on the right, a seagrass rug under a walnut coffee table holding a white bowl.">
+      <img src="studio-crop.png" alt="Mockup of the RaiderVision studio lounge set: cream curved sofa against a walnut slat wall with a blue RaiderVision neon sign, a faux bay leaf tree on the left, a black side table with a small plant on the right, a seagrass rug under a walnut coffee table holding a white beaded bowl filled with moss and rattan balls.">
       <svg id="lines" viewBox="0 0 800 726" preserveAspectRatio="none" aria-hidden="true"></svg>
     </div>
     <div class="picked" id="picked" aria-live="polite">
@@ -185,11 +185,11 @@
   <section aria-labelledby="list-h">
     <h2 id="list-h">Shopping list</h2>
     <div class="list" id="list"></div>
-    <div class="total"><span>Total</span><span>$485.32</span></div>
+    <div class="total"><span>Total, plus decor balls</span><span>$498.67</span></div>
     <ul class="notes">
       <li><strong>Already in the studio:</strong> Presley curved sofa (102" W), 43" walnut coffee table, blue RaiderVision neon sign.</li>
       <li><strong>Rug:</strong> on pre-order, estimated in stock Sep 30 to Oct 4.</li>
-      <li><strong>Bowl:</strong> moss and greenery shown in the bowl are not included.</li>
+      <li><strong>Decor balls:</strong> 18-piece set, sold separately on Amazon. The photo shows 6 in the bowl. Check the price on the Amazon page.</li>
       <li>Prices as listed on Sep 16, 2026 and may change.</li>
     </ul>
   </section>
@@ -202,10 +202,14 @@
       size: '72" H x 32" W x 25" D', price: "$150.00",
       url: "https://www.target.com/p/bay-leaf-tree-in-basket-threshold-8482-designed-with-studio-mcgee/-/A-91052232",
       pin: [90, 235], tag: [150, 62] },
-    { id: "bowl", name: "White knob bowl", full: "Modern Round Bowl with Knobs, white", store: "Target",
-      size: '11" W x 11" D x 4.25" H', price: "$32.12",
-      url: "https://www.target.com/p/modern-round-bowl-with-knobs-for-coffee-table-decor---decorative-centerpiece-table-decorations-for-home-decor-accents---4-25---white--no-aasa/-/A-1007351532",
-      pin: [312, 480], tag: [170, 610] },
+    { id: "bowl", name: "White beaded bowl", full: "Elegant Beaded Decorative Bowl, white", store: "Target",
+      size: '14" W x 14" D x 3.75" H', price: "$45.47", was: "$53.49 less 15%",
+      url: "https://www.target.com/p/elegant-beaded-decorative-bowl-for-coffee-table-decorative-centerpiece-table-decorations-and-dining-room-for-home-decor-accents-3-75-white/-/A-1008209159",
+      pin: [305, 472], tag: [170, 610] },
+    { id: "decor", name: "Moss and rattan balls", full: "BYHER Moss and Rattan Decorative Balls, 18 pieces", store: "Amazon",
+      size: "18 pieces, green moss and brown rattan", price: "",
+      url: "https://www.amazon.com/dp/B0C4F7Y47S",
+      pin: [366, 438], tag: [230, 395] },
     { id: "plant", name: "Small faux plant", full: "Peperomia Faux Plant in Pot", store: "Target, Threshold",
       size: '10" H x 8.5" W x 8.5" D', price: "$6.00",
       url: "https://www.target.com/p/artificial-leaf-plant---threshold--8482---peperomia-caperata-in-melamine-pot--indoor-faux-flora-decor--no-aasa/-/A-88656966",
@@ -219,7 +223,7 @@
       url: "https://www.rugsusa.com/products/seagrass-with-border-rug-beige?variant=47064864161848",
       pin: [680, 678], tag: [505, 672] },
   ];
-  const LIST_ORDER = ["rug", "tree", "side", "bowl", "plant"];
+  const LIST_ORDER = ["rug", "tree", "side", "bowl", "decor", "plant"];
   const W = 800, H = 726;
   const scene = document.getElementById("scene");
   const lines = document.getElementById("lines");
@@ -227,6 +231,7 @@
   const list = document.getElementById("list");
   const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const pct = (v, n) => (v / n * 100).toFixed(2) + "%";
+  const priceAt = it => (it.price ? it.price + " at " : "Price at ") + it.store.split(",")[0];
 
   const pins = {}, tags = {};
   ITEMS.forEach(it => {
@@ -238,14 +243,14 @@
     const tag = document.createElement("a");
     tag.className = "tag"; tag.href = it.url; tag.target = "_blank"; tag.rel = "noopener";
     tag.style.left = pct(it.tag[0], W); tag.style.top = pct(it.tag[1], H);
-    tag.innerHTML = `<span class="name">${esc(it.name)}</span><span class="price">${it.price} at ${esc(it.store.split(",")[0])}</span>` +
+    tag.innerHTML = `<span class="name">${esc(it.name)}</span><span class="price">${esc(priceAt(it))}</span>` +
       `<span class="dims">${esc(it.code ? "Use code " + it.code + " at checkout" : it.size)}</span><span class="buy">Buy it &#8599;</span>`;
     scene.appendChild(tag); tags[it.id] = tag;
 
     const pin = document.createElement("button");
     pin.type = "button"; pin.className = "pin"; pin.id = "pin-" + it.id;
     pin.style.left = pct(it.pin[0], W); pin.style.top = pct(it.pin[1], H);
-    pin.setAttribute("aria-label", it.name + ", " + it.price);
+    pin.setAttribute("aria-label", it.name + ", " + priceAt(it));
     pin.setAttribute("aria-pressed", "false");
     pin.addEventListener("click", () => select(it.id));
     scene.appendChild(pin); pins[it.id] = pin;
@@ -261,7 +266,7 @@
     picked.innerHTML =
       `<div class="p-name">${esc(it.full)}</div>` +
       `<a class="go" href="${it.url}" target="_blank" rel="noopener">Buy</a>` +
-      `<div class="p-meta">${it.price} at ${esc(it.store.split(",")[0])} &middot; ${esc(it.size)}</div>` +
+      `<div class="p-meta">${esc(priceAt(it))} &middot; ${esc(it.size)}</div>` +
       (it.code ? `<div class="p-promo">Use code <span class="code">${it.code}</span> at checkout for 20% off.</div>` : "");
   }
 
@@ -272,7 +277,7 @@
     row.innerHTML =
       `<div class="item">${esc(it.full)}<span class="where">${esc(it.store)}</span></div>` +
       `<div class="size">${esc(it.size)}</div>` +
-      `<div class="cost">${it.price}${it.was ? `<small>${esc(it.was)}</small>` : ""}</div>` +
+      `<div class="cost">${it.price || "See Amazon"}${it.was ? `<small>${esc(it.was)}</small>` : ""}</div>` +
       `<a class="go" target="_blank" rel="noopener" href="${it.url}">Buy</a>` +
       (it.code ? `<div class="promo">Use code <span class="code">${it.code}</span> at checkout for 20% off. It takes the rug from $259 to $207.20.</div>` : "");
     list.appendChild(row);

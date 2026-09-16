@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<style>*,*::before,*::after{box-sizing:border-box}img{max-width:100%}[hidden]{display:none!important}body{margin:0}</style>
+<title>RaiderVision Studio Set</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  /* Single deliberate look: the studio at night. Dark walnut ground, neon-blue accent. */
+  :root {
+    --ground: #15120f;
+    --panel: #1f1a16;
+    --line: #3a3029;
+    --ink: #efe9e1;
+    --muted: #b3a79a;
+    --neon: #45b6ff;
+    --neon-deep: #0f6fd1;
+    --tag: rgba(18, 15, 12, 0.88);
+    color-scheme: dark;
+  }
+  html, body { background: var(--ground); color: var(--ink); }
+  body {
+    font: 400 16px/1.55 "Source Sans 3", "Segoe UI", system-ui, sans-serif;
+    padding-inline: 16px;
+    padding-block: 28px 48px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; display: grid; gap: 28px; }
+
+  header { display: grid; gap: 6px; }
+  .eyebrow {
+    font: 600 13px/1 "Barlow Condensed", "Arial Narrow", sans-serif;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--neon);
+  }
+  h1 {
+    margin: 0;
+    font: 700 clamp(32px, 5vw, 50px)/1 "Barlow Condensed", "Arial Narrow", sans-serif;
+    letter-spacing: 0.01em; text-wrap: balance;
+  }
+  .lede { margin: 4px 0 0; color: var(--muted); max-width: 62ch; }
+
+  /* ---------- shoppable photo ---------- */
+  .scene {
+    position: relative; width: 100%; max-width: 100%;
+    aspect-ratio: 800 / 726; border-radius: 6px; overflow: hidden;
+    background: #000; box-shadow: 0 24px 60px rgba(0,0,0,0.45);
+  }
+  .scene img { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .scene svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  .scene svg line { stroke: var(--neon); stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0.9; }
+
+  /* dot sits beside the item; the button around it is a finger-sized hit area */
+  .pin {
+    position: absolute; width: 36px; height: 36px; margin: -18px 0 0 -18px; padding: 0;
+    border: 0; background: transparent; cursor: pointer; z-index: 2;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .pin::before {
+    content: ""; position: absolute; left: 50%; top: 50%; width: 11px; height: 11px;
+    transform: translate(-50%, -50%); border-radius: 50%;
+    background: var(--neon); border: 1.5px solid #fff; box-shadow: 0 0 8px rgba(69,182,255,0.7);
+    transition: width .15s, height .15s;
+  }
+  .pin[aria-pressed="true"]::before { width: 16px; height: 16px; box-shadow: 0 0 0 4px rgba(255,255,255,0.35), 0 0 14px rgba(69,182,255,0.9); }
+  .pin:focus-visible { outline: none; }
+  .pin:focus-visible::before { box-shadow: 0 0 0 3px #fff, 0 0 12px var(--neon); }
+  @media (prefers-reduced-motion: no-preference) {
+    .pin::after {
+      content: ""; position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px;
+      border-radius: 50%; border: 2px solid var(--neon); animation: ping 2.4s ease-out infinite; opacity: 0;
+    }
+    @keyframes ping { 0% { transform: scale(0.5); opacity: 0.8; } 100% { transform: scale(1.5); opacity: 0; } }
+  }
+
+  .tag {
+    position: absolute; transform: translate(-50%, -50%);
+    display: grid; gap: 1px; padding: 7px 11px 8px;
+    background: var(--tag); border: 1px solid rgba(69,182,255,0.55); border-radius: 4px;
+    color: var(--ink); text-decoration: none; white-space: nowrap;
+    backdrop-filter: blur(4px);
+    transition: border-color .15s, background .15s, transform .15s;
+  }
+  .tag .name { font: 600 15px/1.15 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.02em; }
+  .tag .price { font: 400 13px/1.2 "Source Sans 3", system-ui, sans-serif; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .tag .dims { display: none; font-size: 12px; color: var(--muted); }
+  .tag .buy {
+    display: none; margin-top: 4px;
+    font: 700 12px/1 "Barlow Condensed", "Arial Narrow", sans-serif;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--neon);
+  }
+  .tag:hover, .tag:focus-visible, .tag.active {
+    background: #0b1726; border-color: var(--neon); z-index: 3;
+    transform: translate(-50%, -50%) scale(1.04); outline: none;
+  }
+  .tag:hover .buy, .tag:focus-visible .buy, .tag.active .buy,
+  .tag:hover .dims, .tag:focus-visible .dims, .tag.active .dims { display: block; }
+  .tag:focus-visible { box-shadow: 0 0 0 3px var(--neon); }
+
+  /* ---------- phone: tap a dot, item card appears under the photo ---------- */
+  .picked { display: none; }
+  @media (max-width: 720px) {
+    .tag, .scene svg { display: none; }
+    .picked {
+      display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 4px 14px;
+      margin-top: 10px; padding: 12px 14px; min-height: 72px;
+      background: var(--panel); border: 1px solid var(--line); border-radius: 6px;
+    }
+    .picked.has-item { border-color: rgba(69,182,255,0.55); }
+    .picked .p-name { font: 600 19px/1.15 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.02em; }
+    .picked .p-meta { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .picked .p-hint { grid-column: 1 / -1; color: var(--muted); font-size: 15px; }
+    .picked .p-promo { grid-column: 1 / -1; font-size: 14px; }
+    .picked a.go { grid-row: 1 / span 2; grid-column: 2; }
+  }
+
+  /* ---------- shopping list ---------- */
+  section h2 {
+    margin: 0 0 12px;
+    font: 700 26px/1.1 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.01em;
+  }
+  .list { display: grid; border-top: 1px solid var(--line); }
+  .row {
+    display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr) 90px 80px;
+    gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line);
+  }
+  .row .item { font-weight: 600; }
+  .row .where { display: block; font-size: 13px; color: var(--muted); font-weight: 400; }
+  .row .size { font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .row .cost { text-align: right; font-variant-numeric: tabular-nums; }
+  .row .cost small { display: block; font-size: 12px; color: var(--muted); }
+  a.go {
+    justify-self: end; display: inline-block; padding: 10px 16px; border-radius: 4px;
+    background: var(--neon-deep); color: #fff; text-decoration: none;
+    font: 700 13px/1 "Barlow Condensed", "Arial Narrow", sans-serif; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+  a.go:hover { background: var(--neon); color: #06121f; }
+  a.go:focus-visible { outline: 3px solid var(--neon); outline-offset: 2px; }
+  .promo { grid-column: 1 / -1; margin-top: -4px; font-size: 15px; color: var(--ink); }
+  .code {
+    font: 600 14px/1 ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; letter-spacing: 0.06em;
+    color: var(--neon); padding: 3px 7px; border: 1px dashed var(--neon); border-radius: 3px; user-select: all;
+    white-space: nowrap;
+  }
+  .total {
+    display: flex; justify-content: flex-end; gap: 18px; padding: 16px 0 0;
+    font: 700 22px/1 "Barlow Condensed", "Arial Narrow", sans-serif; font-variant-numeric: tabular-nums;
+  }
+  .total span:first-child { color: var(--muted); font-weight: 600; }
+  .notes { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: 14px; color: var(--muted); max-width: 70ch; }
+  .notes strong { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .row { grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; }
+    .row .item { grid-column: 1; grid-row: 1; }
+    .row .size { grid-column: 1; grid-row: 2; }
+    .row .cost { grid-column: 2; grid-row: 1; }
+    .row a.go { grid-column: 2; grid-row: 2; }
+    .row .promo { grid-row: 3; margin-top: 2px; }
+  }
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Studio refresh proposal</div>
+    <h1>RaiderVision set, dressed</h1>
+    <p class="lede">The lounge set as it would look on camera with five new pieces. The sofa, coffee table and neon sign are already in the studio. Point at a label, or tap a blue dot on a phone, to see each item and open its product page.</p>
+  </header>
+
+  <div>
+    <div class="scene" id="scene">
+      <img src="studio-crop.png" alt="Mockup of the RaiderVision studio lounge set: cream curved sofa against a walnut slat wall with a blue RaiderVision neon sign, a faux bay leaf tree on the left, a black side table with a small plant on the right, a seagrass rug under a walnut coffee table holding a white bowl.">
+      <svg id="lines" viewBox="0 0 800 726" preserveAspectRatio="none" aria-hidden="true"></svg>
+    </div>
+    <div class="picked" id="picked" aria-live="polite">
+      <div class="p-hint">Tap a blue dot on the photo to see that item.</div>
+    </div>
+  </div>
+
+  <section aria-labelledby="list-h">
+    <h2 id="list-h">Shopping list</h2>
+    <div class="list" id="list"></div>
+    <div class="total"><span>Total</span><span>$485.32</span></div>
+    <ul class="notes">
+      <li><strong>Already in the studio:</strong> Presley curved sofa (102" W), 43" walnut coffee table, blue RaiderVision neon sign.</li>
+      <li><strong>Rug:</strong> on pre-order, estimated in stock Sep 30 to Oct 4.</li>
+      <li><strong>Bowl:</strong> moss and greenery shown in the bowl are not included.</li>
+      <li>Prices as listed on Sep 16, 2026 and may change.</li>
+    </ul>
+  </section>
+</div>
+
+<script>
+  // Coordinates are pixels in the 800x726 photo: pin sits beside the item, tag is the desktop label.
+  const ITEMS = [
+    { id: "tree", name: "Bay leaf tree in basket", full: "Bay Leaf Tree in Basket", store: "Target, Threshold x Studio McGee",
+      size: '72" H x 32" W x 25" D', price: "$150.00",
+      url: "https://www.target.com/p/bay-leaf-tree-in-basket-threshold-8482-designed-with-studio-mcgee/-/A-91052232",
+      pin: [90, 235], tag: [150, 62] },
+    { id: "bowl", name: "White knob bowl", full: "Modern Round Bowl with Knobs, white", store: "Target",
+      size: '11" W x 11" D x 4.25" H', price: "$32.12",
+      url: "https://www.target.com/p/modern-round-bowl-with-knobs-for-coffee-table-decor---decorative-centerpiece-table-decorations-for-home-decor-accents---4-25---white--no-aasa/-/A-1007351532",
+      pin: [312, 480], tag: [170, 610] },
+    { id: "plant", name: "Small faux plant", full: "Peperomia Faux Plant in Pot", store: "Target, Threshold",
+      size: '10" H x 8.5" W x 8.5" D', price: "$6.00",
+      url: "https://www.target.com/p/artificial-leaf-plant---threshold--8482---peperomia-caperata-in-melamine-pot--indoor-faux-flora-decor--no-aasa/-/A-88656966",
+      pin: [642, 328], tag: [690, 175] },
+    { id: "side", name: "Prisma black side table", full: "Prisma Side Table, black", store: "Target, Threshold",
+      size: '22.12" H x 16" W x 16" D', price: "$90.00",
+      url: "https://www.target.com/p/prisma-side-table-black---threshold--8482---rubberwood-no-assembly-required--round-shape--no-aasa/-/A-87349205",
+      pin: [662, 430], tag: [705, 540] },
+    { id: "rug", name: "Seagrass rug, 8' x 10'", full: "Seagrass with Border Rug, beige", store: "Rugs USA",
+      size: "8' x 10', 10' side along the sofa", price: "$207.20", was: "$259 less 20%", code: "KITCHEN",
+      url: "https://www.rugsusa.com/products/seagrass-with-border-rug-beige?variant=47064864161848",
+      pin: [680, 678], tag: [505, 672] },
+  ];
+  const LIST_ORDER = ["rug", "tree", "side", "bowl", "plant"];
+  const W = 800, H = 726;
+  const scene = document.getElementById("scene");
+  const lines = document.getElementById("lines");
+  const picked = document.getElementById("picked");
+  const list = document.getElementById("list");
+  const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const pct = (v, n) => (v / n * 100).toFixed(2) + "%";
+
+  const pins = {}, tags = {};
+  ITEMS.forEach(it => {
+    const ln = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    ln.setAttribute("x1", it.pin[0]); ln.setAttribute("y1", it.pin[1]);
+    ln.setAttribute("x2", it.tag[0]); ln.setAttribute("y2", it.tag[1]);
+    lines.appendChild(ln);
+
+    const tag = document.createElement("a");
+    tag.className = "tag"; tag.href = it.url; tag.target = "_blank"; tag.rel = "noopener";
+    tag.style.left = pct(it.tag[0], W); tag.style.top = pct(it.tag[1], H);
+    tag.innerHTML = `<span class="name">${esc(it.name)}</span><span class="price">${it.price} at ${esc(it.store.split(",")[0])}</span>` +
+      `<span class="dims">${esc(it.code ? "Use code " + it.code + " at checkout" : it.size)}</span><span class="buy">Buy it &#8599;</span>`;
+    scene.appendChild(tag); tags[it.id] = tag;
+
+    const pin = document.createElement("button");
+    pin.type = "button"; pin.className = "pin"; pin.id = "pin-" + it.id;
+    pin.style.left = pct(it.pin[0], W); pin.style.top = pct(it.pin[1], H);
+    pin.setAttribute("aria-label", it.name + ", " + it.price);
+    pin.setAttribute("aria-pressed", "false");
+    pin.addEventListener("click", () => select(it.id));
+    scene.appendChild(pin); pins[it.id] = pin;
+  });
+
+  function select(id) {
+    const it = ITEMS.find(x => x.id === id);
+    Object.keys(pins).forEach(k => {
+      pins[k].setAttribute("aria-pressed", String(k === id));
+      tags[k].classList.toggle("active", k === id);
+    });
+    picked.classList.add("has-item");
+    picked.innerHTML =
+      `<div class="p-name">${esc(it.full)}</div>` +
+      `<a class="go" href="${it.url}" target="_blank" rel="noopener">Buy</a>` +
+      `<div class="p-meta">${it.price} at ${esc(it.store.split(",")[0])} &middot; ${esc(it.size)}</div>` +
+      (it.code ? `<div class="p-promo">Use code <span class="code">${it.code}</span> at checkout for 20% off.</div>` : "");
+  }
+
+  LIST_ORDER.forEach(id => {
+    const it = ITEMS.find(x => x.id === id);
+    const row = document.createElement("div");
+    row.className = "row";
+    row.innerHTML =
+      `<div class="item">${esc(it.full)}<span class="where">${esc(it.store)}</span></div>` +
+      `<div class="size">${esc(it.size)}</div>` +
+      `<div class="cost">${it.price}${it.was ? `<small>${esc(it.was)}</small>` : ""}</div>` +
+      `<a class="go" target="_blank" rel="noopener" href="${it.url}">Buy</a>` +
+      (it.code ? `<div class="promo">Use code <span class="code">${it.code}</span> at checkout for 20% off. It takes the rug from $259 to $207.20.</div>` : "");
+    list.appendChild(row);
+  });
+</script>
+
+</body>
+</html>
